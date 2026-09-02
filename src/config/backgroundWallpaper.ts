@@ -39,7 +39,7 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 		// 桌面背景图片（支持单张或多张随机）
 		// desktop: "assets/images/DesktopWallpaper/d1.avif",
 		desktop: [
-			"https://t.alcy.cc/pc",
+			"assets/images/DesktopWallpaper/zhonglou.webp",
 			// "assets/images/DesktopWallpaper/d1.avif",
 			// "assets/images/DesktopWallpaper/d2.avif",
 			// "assets/images/DesktopWallpaper/d3.avif",
@@ -62,7 +62,8 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 		// 支持远程视频URL，本地视频请放在 public/assets/videos/ 目录下
 		// playerUrl: "/assets/videos/firefly.mp4",
 		playerUrl: [
-			"https://resource-ai.helplook.net/docker_production/4lkf7aju/faq/files/6a36dfc116662.mp4",
+			// "https://resource-ai.helplook.net/docker_production/4lkf7aju/faq/files/6a36dfc116662.mp4",
+			"https://t.alcy.cc/acgapi/acg/ndmz.mp4",
 		],
 	},
 	// 横幅壁纸和全屏壁纸共享配置

@@ -16,6 +16,7 @@ import {
 	navbarMode,
 	sidebarLayoutConfig,
 	siteConfig,
+	spineModelConfig,
 } from "@/config";
 import { getBannerVisibilityState } from "@/utils/banner-visibility-utils";
 import { getBackgroundImages, isHomePage } from "@/utils/layout-utils";
@@ -167,8 +168,9 @@ const {
             </div>
         </div>
 
-        <SpineModel></SpineModel>
+        {spineModelConfig.enable && <SpineModel />}
         {live2dWidgetConfig.enable && <Live2DWidget config={live2dWidgetConfig} />}
+        <WelcomeToast></WelcomeToast>  //欢迎提示语组件
     </div>
 </div>
 
