@@ -47,7 +47,7 @@ export const friendsPageConfig: FriendsPageConfig = {
 		},
 		{
 			title: "通过审核",
-			content: "工作日 48 小时内，节假日顺延。",
+			content: "工作日 48 小时内，节假日顺延",
 		},
 	],
 };

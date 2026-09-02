@@ -7,6 +7,7 @@ slug: /ai-summary-tutorial
 tags: ["Firefly"]
 category: Firefly
 draft: false
+series: "Firefly 扩展特性"
 description: "最近给博客折腾了个 AI 摘要功能，效果挺有意思。今天就把我在 Firefly 项目里摸爬滚打总结的实战经验全盘托出。从挑大模型、写构建脚本到搞定打字机动画，顺便分享几个我踩过的坑，希望能帮想给博客加 AI 元素的你少走点弯路。"
 descriptionSource: ai
 ---

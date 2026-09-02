@@ -8,6 +8,7 @@ slug: /travel
 tags: ["旅游"]
 category: 旅行
 draft: false
+series: "旅行"
 descriptionSource: ai
 ---
 

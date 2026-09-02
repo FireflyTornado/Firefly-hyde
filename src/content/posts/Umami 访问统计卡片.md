@@ -8,6 +8,7 @@ slug: /UmamiStats
 tags: ["Firefly"]
 category: Firefly
 draft: false
+series: "Firefly 扩展特性"
 descriptionSource: ai
 
 ---

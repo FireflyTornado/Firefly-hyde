@@ -98,15 +98,15 @@ const placesI18n = {
       <div class="places-stats mb-8">
         <div class="places-stat-card">
           <div class="places-stat-value">{uniqueLocationCount}</div>
-          <div class="places-stat-label">{i18n(I18nKey.placesStatLocationsUnit)}</div>
+          <div class="places-stat-label dark:text-neutral-400">{i18n(I18nKey.placesStatLocationsUnit)}</div>
         </div>
         <div class="places-stat-card">
           <div class="places-stat-value">{totalVisitCount}</div>
-          <div class="places-stat-label">{i18n(I18nKey.placesStatVisitsUnit)}</div>
+          <div class="places-stat-label dark:text-neutral-400">{i18n(I18nKey.placesStatVisitsUnit)}</div>
         </div>
         <div class="places-stat-card">
           <div class="places-stat-value">{thisYearVisitCount}</div>
-          <div class="places-stat-label">{i18n(I18nKey.placesStatThisYearUnit)}</div>
+          <div class="places-stat-label dark:text-neutral-400">{i18n(I18nKey.placesStatThisYearUnit)}</div>
         </div>
       </div>
 
@@ -117,13 +117,13 @@ const placesI18n = {
             {i18n(I18nKey.placesLatestTrip)}
           </div>
           <div class="places-latest-body">
-            <h3 class="places-latest-title">
+            <h3 class="places-latest-title dark:text-neutral-100">
               {latestPlace.province}{latestPlace.city ? ` · ${latestPlace.city}` : ""}
             </h3>
             {latestPlace.experience && (
-              <p class="places-latest-exp">{latestPlace.experience}</p>
+              <p class="places-latest-exp dark:text-neutral-400">{latestPlace.experience}</p>
             )}
-            <div class="places-latest-meta">
+            <div class="places-latest-meta dark:text-neutral-400">
               <time datetime={latestPlace.date.toISOString().slice(0, 10)}>
                 {formatPlaceDateRange(latestPlace)}
               </time>
@@ -134,7 +134,7 @@ const placesI18n = {
       )}
 
       <div class="mb-8">
-        <h2 class="places-section-title">{i18n(I18nKey.placesMap)}</h2>
+        <h2 class="places-section-title dark:text-neutral-100">{i18n(I18nKey.placesMap)}</h2>
         <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-4">{displaySubtitle}</p>
 
         <div class="places-map-shell">
@@ -188,7 +188,7 @@ const placesI18n = {
       </div>
 
       <div>
-        <h2 class="places-section-title">{i18n(I18nKey.placesList)}</h2>
+        <h2 class="places-section-title dark:text-neutral-100">{i18n(I18nKey.placesList)}</h2>
         {sortedPlaces.length === 0 ? (
           <div class="places-empty">
             <p class="text-neutral-500 dark:text-neutral-400">{i18n(I18nKey.placesNoData)}</p>
@@ -196,31 +196,68 @@ const placesI18n = {
           </div>
         ) : (
           <div class="places-grid" id="places-list">
-            {sortedPlaces.map((place, index) => (
+            {sortedPlaces.map((place, index) => {
+              const images = (place.images || []).filter(Boolean);
+              const hasImages = images.length > 0;
+              return (
               <article
-                class="place-card"
+                class={`place-card${hasImages ? " place-card--has-images" : ""}`}
                 style={`--stagger: ${index * 0.04}s`}
                 data-years={getYearKeys(place).join(",")}
                 data-category={place.category}
+                data-idx={index}
               >
-                <div class="place-card-pin">
-                  <Icon name="material-symbols:location-on" is:inline class="text-lg" />
-                </div>
-                <div class="place-card-content">
-                  <div class="place-card-top">
-                    <h3 class="place-name">
+                {hasImages && (
+                  <div class="place-card-gallery" data-total={images.length} data-index="0">
+                    {images.length > 1 && (
+                      <>
+                        <button type="button" class="place-card-gallery-nav place-card-gallery-prev" aria-label="prev">
+                          <Icon name="material-symbols:chevron-left-rounded" />
+                        </button>
+                        <button type="button" class="place-card-gallery-nav place-card-gallery-next" aria-label="next">
+                          <Icon name="material-symbols:chevron-right-rounded" />
+                        </button>
+                      </>
+                    )}
+                    <div class="place-card-gallery-viewport">
+                      {images.map((src, i) => (
+                        <img
+                          class={`place-card-gallery-img${i === 0 ? " is-active" : ""}`}
+                          src={src}
+                          alt=""
+                          loading="lazy"
+                          data-idx={i}
+                        />
+                      ))}
+                    </div>
+                    {images.length > 1 && (
+                      <div class="place-card-gallery-dots">
+                        {images.map((_, i) => (
+                          <span class={`place-card-gallery-dot${i === 0 ? " is-active" : ""}`} data-idx={i}></span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                <div class="place-card-body">
+                  <div class="place-card-pin">
+                    <Icon name="material-symbols:location-on" is:inline class="text-lg" />
+                  </div>
+                  <div class="place-card-content">
+                    <h3 class="place-name dark:text-neutral-100">
                       {place.province || i18n(I18nKey.placesUnknownProvince)}
                       {place.city ? ` · ${place.city}` : ""}
                     </h3>
-                    <span class="place-source-tag">{place.category}</span>
+                    <time class="place-date dark:text-neutral-100" datetime={place.date.toISOString().slice(0, 10)}>
+                      {formatPlaceDateRange(place)}
+                    </time>
+                    <span class="place-source-tag dark:text-neutral-400">{place.category}</span>
+                    {place.experience && <p class="place-exp dark:text-neutral-100">{place.experience}</p>}
                   </div>
-                  {place.experience && <p class="place-exp">{place.experience}</p>}
-                  <time class="place-date" datetime={place.date.toISOString().slice(0, 10)}>
-                    {formatPlaceDateRange(place)}
-                  </time>
                 </div>
               </article>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -252,6 +289,134 @@ const placesI18n = {
   var uiBound = false;
   var initToken = 0;
   var amapLoadPromise = null;
+
+  // 卡片轮播图触摸滑动支持（独立于地图加载）
+  (function bindCardGallerySwipe() {
+    var startX = 0;
+    var startY = 0;
+    var touched = false;
+    var moved = false;
+    var MOVE_PX = 12;
+
+    document.addEventListener("touchstart", function (e) {
+      var gallery = e.target.closest(".place-card-gallery");
+      if (!gallery) return;
+      var t = e.touches && e.touches[0];
+      if (!t) return;
+      touched = true;
+      moved = false;
+      startX = t.clientX;
+      startY = t.clientY;
+    }, { passive: true });
+
+    document.addEventListener("touchmove", function (e) {
+      if (!touched) return;
+      var t = e.touches && e.touches[0];
+      if (!t) return;
+      if (
+        Math.abs(t.clientX - startX) > MOVE_PX ||
+        Math.abs(t.clientY - startY) > MOVE_PX
+      ) {
+        moved = true;
+      }
+    }, { passive: true });
+
+    document.addEventListener("touchend", function (e) {
+      if (!touched) return;
+      touched = false;
+      if (!moved) return;
+      var gallery = (e.changedTouches && e.changedTouches[0] && e.changedTouches[0].target && e.changedTouches[0].target.closest(".place-card-gallery")) || null;
+      if (!gallery) return;
+      var t = e.changedTouches && e.changedTouches[0];
+      if (!t) return;
+      var dx = t.clientX - startX;
+      var dy = t.clientY - startY;
+      // 水平滑动优先，水平位移大于垂直位移时才切换
+      if (Math.abs(dx) > 30 && Math.abs(dx) > Math.abs(dy)) {
+        var idx = Number(gallery.getAttribute("data-index") || 0);
+        if (dx < 0) {
+          setCardGalleryIndex(gallery, idx + 1); // 左滑 → 下一张
+        } else {
+          setCardGalleryIndex(gallery, idx - 1); // 右滑 → 上一张
+        }
+      }
+    }, { passive: true });
+  })();
+
+  // 卡片点击 → 滚动到地图并定位对应足迹
+  var pendingTarget = null;
+  function jumpToPlace(place, lng, lat) {
+    if (!map || !place) return false;
+    var AMap = window.AMap;
+    if (!AMap) return false;
+    var pos = [lng, lat];
+    // 先 resize，确保地图容器尺寸正确（首次从屏幕外滚入时尺寸可能为 0）
+    try { map.resize(); } catch (e) {}
+    // 等 resize 生效后再定位，否则居中会偏移
+    setTimeout(function () {
+      if (!map) return;
+      try { map.resize(); } catch (e) {}
+      var cur = map.getZoom() || 5;
+      var targetZoom = Math.max(cur, 16);
+      if (cur < 16) {
+        map.setZoomAndCenter(targetZoom, pos);
+      } else {
+        map.panTo(pos);
+      }
+      if (!infoWindow) {
+        infoWindow = new AMap.InfoWindow({
+          isCustom: true,
+          autoMove: false,
+          offset: new AMap.Pixel(0, 14),
+        });
+        infoWindow.on("close", function () {
+          setPlacesPopupOpen(false);
+        });
+      }
+      infoWindow.setContent(buildPopupHtml(place));
+      setPlacesPopupOpen(true);
+      setTimeout(function () {
+        if (!map) return;
+        infoWindow.open(map, pos);
+        // 弹窗在 marker 上方，向下平移地图让 marker 上移，确保弹窗完整显示
+        setTimeout(function () {
+          try { map.panBy(0, 140); } catch (err) {}
+        }, 300);
+      }, cur < 16 ? 500 : 100);
+    }, 150);
+    return true;
+  }
+  function waitForMapAndJump() {
+    if (!pendingTarget) return;
+    if (jumpToPlace(pendingTarget.place, pendingTarget.lng, pendingTarget.lat)) {
+      pendingTarget = null;
+    } else {
+      setTimeout(waitForMapAndJump, 100);
+    }
+  }
+  // 使用 document 事件委托，兼容 Swup 页面切换
+  document.addEventListener("click", function (e) {
+    var card = e.target.closest(".place-card");
+    if (!card) return;
+    // 轮播图导航按钮不触发跳转
+    if (e.target.closest(".place-card-gallery-nav")) return;
+    var idx = parseInt(card.getAttribute("data-idx"), 10);
+    var place = clientSortedPlaces[idx];
+    if (!place || !isFinite(place.lng) || !isFinite(place.lat)) return;
+    pendingTarget = { place: place, lng: place.lng, lat: place.lat };
+    var mapShell = document.querySelector(".places-map-shell");
+    if (mapShell) {
+      // 滚动到地图区域，留出顶部导航栏空间
+      var rect = mapShell.getBoundingClientRect();
+      var top = rect.top + window.scrollY - 180;
+      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    }
+    // 确保地图已初始化
+    if (!map) {
+      init();
+    }
+    waitForMapAndJump();
+  });
 
   function hideLoading() {
     if (loadingEl) loadingEl.classList.add("is-hidden");
@@ -382,8 +547,8 @@ const placesI18n = {
         .join("");
       var navHtml =
         images.length > 1
-          ? '<button type="button" class="places-gallery-nav places-gallery-prev" aria-label="prev">‹</button>' +
-            '<button type="button" class="places-gallery-nav places-gallery-next" aria-label="next">›</button>' +
+          ? '<button type="button" class="places-gallery-nav places-gallery-prev" aria-label="prev"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M15.4 18.4 9 12l6.4-6.4 1.4 1.4L11.8 12l5 5z"/></svg></button>' +
+            '<button type="button" class="places-gallery-nav places-gallery-next" aria-label="next"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="m9 18.4-1.4-1.4 5-5-5-5L9 5.6 15.4 12z"/></svg></button>' +
             '<div class="places-gallery-dots">' +
             images
               .map(function (_, i) {
@@ -416,20 +581,20 @@ const placesI18n = {
 
     return (
       '<div class="places-popup">' +
-      '<div class="places-popup-head">' +
+      '<div class="places-popup-head dark:text-neutral-100">' +
       "<strong>" +
       title +
       "</strong>" +
       '<button type="button" class="places-popup-close" aria-label="close">×</button>' +
       "</div>" +
-      '<div class="places-popup-date">' +
+      '<div class="places-popup-date dark:text-neutral-100">' +
       dateText +
       "</div>" +
       (tagsHtml
         ? '<div class="places-popup-tags">' + tagsHtml + "</div>"
         : "") +
       (place.experience
-        ? '<p class="places-popup-exp">' +
+        ? '<p class="places-popup-exp dark:text-neutral-100">' +
           escapeHtml(place.experience) +
           "</p>"
         : "") +
@@ -990,6 +1155,19 @@ const placesI18n = {
     });
   }
 
+  function setCardGalleryIndex(gallery, nextIndex) {
+    var total = Number(gallery.getAttribute("data-total") || 0);
+    if (!total) return;
+    var index = ((nextIndex % total) + total) % total;
+    gallery.setAttribute("data-index", String(index));
+    gallery.querySelectorAll(".place-card-gallery-img").forEach(function (img, i) {
+      img.classList.toggle("is-active", i === index);
+    });
+    gallery.querySelectorAll(".place-card-gallery-dot").forEach(function (dot, i) {
+      dot.classList.toggle("is-active", i === index);
+    });
+  }
+
   function bindUi(AMap) {
     if (uiBound) return;
     uiBound = true;
@@ -1033,26 +1211,53 @@ const placesI18n = {
         return;
       }
 
+      // 地图弹窗图片轮播
       var gallery = e.target.closest(".places-gallery");
-      if (!gallery) return;
-      var idx = Number(gallery.getAttribute("data-index") || 0);
-      if (e.target.closest(".places-gallery-prev")) {
-        e.preventDefault();
-        e.stopPropagation();
-        setGalleryIndex(gallery, idx - 1);
+      if (gallery) {
+        var idx = Number(gallery.getAttribute("data-index") || 0);
+        if (e.target.closest(".places-gallery-prev")) {
+          e.preventDefault();
+          e.stopPropagation();
+          setGalleryIndex(gallery, idx - 1);
+          return;
+        }
+        if (e.target.closest(".places-gallery-next")) {
+          e.preventDefault();
+          e.stopPropagation();
+          setGalleryIndex(gallery, idx + 1);
+          return;
+        }
+        var dot = e.target.closest(".places-gallery-dot");
+        if (dot) {
+          e.preventDefault();
+          e.stopPropagation();
+          setGalleryIndex(gallery, Number(dot.getAttribute("data-idx") || 0));
+        }
         return;
       }
-      if (e.target.closest(".places-gallery-next")) {
-        e.preventDefault();
-        e.stopPropagation();
-        setGalleryIndex(gallery, idx + 1);
-        return;
-      }
-      var dot = e.target.closest(".places-gallery-dot");
-      if (dot) {
-        e.preventDefault();
-        e.stopPropagation();
-        setGalleryIndex(gallery, Number(dot.getAttribute("data-idx") || 0));
+
+      // 卡片图片轮播
+      var cardGallery = e.target.closest(".place-card-gallery");
+      if (cardGallery) {
+        var cardIdx = Number(cardGallery.getAttribute("data-index") || 0);
+        if (e.target.closest(".place-card-gallery-prev")) {
+          e.preventDefault();
+          e.stopPropagation();
+          setCardGalleryIndex(cardGallery, cardIdx - 1);
+          return;
+        }
+        if (e.target.closest(".place-card-gallery-next")) {
+          e.preventDefault();
+          e.stopPropagation();
+          setCardGalleryIndex(cardGallery, cardIdx + 1);
+          return;
+        }
+        var cardDot = e.target.closest(".place-card-gallery-dot");
+        if (cardDot) {
+          e.preventDefault();
+          e.stopPropagation();
+          setCardGalleryIndex(cardGallery, Number(cardDot.getAttribute("data-idx") || 0));
+        }
       }
     });
 
@@ -1249,6 +1454,8 @@ const placesI18n = {
         });
         map.on("complete", function () {
           scheduleMapResize();
+          // 如果有待处理的卡片点击，自动跳转
+          waitForMapAndJump();
         });
         map.addControl(new AMap.Scale());
         hideLoading();
@@ -1462,7 +1669,6 @@ const placesI18n = {
   .places-stat-label {
     margin-top: 0.35rem;
     font-size: 0.85rem;
-    color: var(--deep-text);
     opacity: 0.75;
   }
   .places-latest {
@@ -1485,7 +1691,6 @@ const placesI18n = {
   }
   .places-latest-exp {
     margin-top: 0.35rem;
-    color: var(--deep-text);
     opacity: 0.85;
   }
   .places-latest-meta {
@@ -1518,15 +1723,15 @@ const placesI18n = {
   .places-filter-chip {
     pointer-events: auto;
     border: 1px solid var(--line-divider);
-    background: color-mix(in oklch, var(--card-bg) 92%, transparent);
+    background: color-mix(in oklch,var(--card-bg) 92%,transparent);
     backdrop-filter: blur(8px);
-    color: var(--deep-text);
+    color: var(--btn-content);
     border-radius: 999px;
-    padding: 0.4rem 0.85rem;
-    font-size: 0.85rem;
+    padding: .4rem .85rem;
+    font-size: .85rem;
     cursor: pointer;
-    transition: 0.15s ease;
-    box-shadow: 0 4px 14px color-mix(in oklch, black 8%, transparent);
+    transition: .15s ease;
+    box-shadow: 0 4px 14px color-mix(in oklch,black 8%,transparent)
   }
   .places-filter-chip:hover {
     border-color: color-mix(in oklch, var(--primary) 40%, var(--line-divider));
@@ -1583,6 +1788,7 @@ const placesI18n = {
     gap: 8px;
   }
   .places-map-ctrl {
+    color: var(--btn-content);
     width: 36px;
     height: 36px;
     display: grid;
@@ -1591,7 +1797,6 @@ const placesI18n = {
     border-radius: 8px;
     background: color-mix(in oklch, var(--card-bg) 94%, transparent);
     backdrop-filter: blur(8px);
-    color: var(--deep-text);
     box-shadow: 0 4px 14px color-mix(in oklch, black 10%, transparent);
     cursor: pointer;
     transition: background 0.15s ease, transform 0.15s ease, color 0.15s ease;
@@ -1636,6 +1841,7 @@ const placesI18n = {
     max-width: calc(100% - 7rem);
   }
   .places-toggle {
+    color: var(--btn-content);
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
@@ -1667,43 +1873,148 @@ const placesI18n = {
     border-radius: 1rem;
     border: 1px solid var(--line-divider);
     background: var(--card-bg);
+    cursor: pointer;
     animation: places-card-in 0.45s ease both;
     animation-delay: var(--stagger, 0s);
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+  .place-card:hover {
+    background: color-mix(in oklch, var(--primary) 8%, var(--card-bg-transparent));
+    border-color: var(--primary);
+  }
+  /* 有图片时：卡片变为垂直布局，轮播图在顶部 */
+  .place-card--has-images {
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+  }
+  .place-card--has-images .place-card-body {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem 1rem;
   }
   .place-card.is-hidden {
     display: none;
+  }
+  /* 卡片轮播图 */
+  .place-card-gallery {
+    position: relative;
+    width: 100%;
+  }
+  .place-card-gallery-viewport {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+  .place-card-gallery-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.4s ease;
+  }
+  .place-card:hover .place-card-gallery-img.is-active {
+    transform: scale(1.06);
+  }
+  .place-card-gallery-img.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .place-card-gallery-nav {
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    display: grid;
+    width: 1.75rem;
+    height: 1.75rem;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: rgb(0 0 0 / 48%);
+    color: white;
+    cursor: pointer;
+    font-size: 1.75rem;
+    line-height: 1;
+    transform: translateY(-50%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, background 0.15s ease;
+  }
+  .place-card-gallery:hover .place-card-gallery-nav {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .place-card-gallery-nav:hover {
+    background: rgb(0 0 0 / 72%);
+  }
+  .place-card-gallery-nav svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .place-card-gallery-prev {
+    left: 0.75rem;
+  }
+  .place-card-gallery-next {
+    right: 0.75rem;
+  }
+  .place-card-gallery-dots {
+    position: absolute;
+    bottom: 6px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .place-card-gallery:hover .place-card-gallery-dots {
+    opacity: 1;
+  }
+  .place-card-gallery-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: background 0.15s ease, width 0.15s ease;
+  }
+  .place-card-gallery-dot.is-active {
+    background: #fff;
+    width: 14px;
+    border-radius: 3px;
   }
   .place-card-pin {
     color: var(--primary);
     margin-top: 0.15rem;
   }
-  .place-card-top {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
   .place-name {
     font-weight: 700;
   }
-  .place-exp {
-    margin-top: 0.35rem;
-    font-size: 0.9rem;
-    opacity: 0.85;
-  }
   .place-date {
     display: block;
-    margin-top: 0.5rem;
+    margin-top: 0.2rem;
     font-size: 0.78rem;
     opacity: 0.6;
   }
   .place-source-tag {
-    flex-shrink: 0;
+    display: inline-block;
+    margin-top: 0.35rem;
     font-size: 0.72rem;
     padding: 0.15rem 0.45rem;
     border-radius: 999px;
     background: color-mix(in oklch, var(--primary) 12%, transparent);
     color: var(--primary);
+  }
+  .place-exp {
+    margin-top: 0.35rem;
+    font-size: 0.9rem;
+    opacity: 0.85;
   }
   .places-empty {
     text-align: center;
@@ -1806,73 +2117,81 @@ const placesI18n = {
     opacity: 0.8;
   }
   .places-popup {
-    width: min(280px, 78vw);
-    background: #fff;
-    color: #1f2937;
-    border-radius: 14px;
-    box-shadow: 0 12px 36px rgba(15, 23, 42, 0.18);
-    padding: 12px 12px 10px;
-    font-size: 13px;
-    line-height: 1.45;
+    width: min(320px, 82vw);
+    background: var(--card-bg);
+    color: var(--deep-text);
+    border-radius: 1rem;
+    border: 1px solid var(--line-divider);
+    box-shadow: 0 12px 36px color-mix(in oklch, black 18%, transparent);
+    padding: 0.85rem 1rem 1rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
   }
   .places-popup-head {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 8px;
+    gap: 0.5rem;
   }
   .places-popup-head strong {
-    font-size: 15px;
+    font-size: 1rem;
+    font-weight: 700;
   }
   .places-popup-close {
-    width: 22px;
-    height: 22px;
-    border: 0;
+    width: 1.375rem;
+    height: 1.375rem;
+    border: 1px solid var(--line-divider);
     border-radius: 999px;
-    background: #f3f4f6;
-    color: #6b7280;
+    background: color-mix(in oklch, var(--card-bg) 92%, transparent);
+    color: var(--deep-text);
     cursor: pointer;
     line-height: 1;
     flex-shrink: 0;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+  .places-popup-close:hover {
+    color: var(--primary);
+    border-color: var(--primary);
   }
   .places-popup-date {
-    margin-top: 4px;
-    color: #6b7280;
-    font-size: 12px;
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.78rem;
+    opacity: 0.6;
   }
   .places-popup-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
-    margin-top: 8px;
+    margin-top: 0.35rem;
   }
   .places-popup-tag {
-    font-size: 11px;
-    padding: 2px 7px;
+    font-size: 0.72rem;
+    padding: 0.15rem 0.45rem;
     border-radius: 999px;
-    background: #f3f4f6;
-    color: #4b5563;
+    background: color-mix(in oklch, var(--primary) 12%, transparent);
+    color: var(--primary);
   }
   .places-popup-exp {
-    margin: 8px 0 0;
-    color: #374151;
+    margin: 0.35rem 0 0;
+    font-size: 0.9rem;
+    opacity: 0.85;
   }
   .places-popup-link {
     display: inline-flex;
-    margin-top: 8px;
-    padding: 3px 10px;
-    border-radius: 8px;
-    background: #f3f4f6;
-    color: #4b5563;
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.7rem;
+    border-radius: 0.5rem;
+    background: color-mix(in oklch, var(--primary) 12%, transparent);
+    color: var(--primary);
     text-decoration: none;
-    font-size: 12px;
+    font-size: 0.78rem;
   }
   .places-gallery {
     position: relative;
     margin-top: 10px;
     border-radius: 10px;
     overflow: hidden;
-    background: #e5e7eb;
   }
   .places-gallery-viewport {
     position: relative;
@@ -1895,53 +2214,71 @@ const placesI18n = {
   }
   .places-gallery-nav {
     position: absolute;
-    top: 50%;
     z-index: 2;
-    transform: translateY(-50%);
-    width: 28px;
-    height: 28px;
+    top: 50%;
+    display: grid;
+    width: 1.75rem;
+    height: 1.75rem;
+    place-items: center;
     border: 0;
-    border-radius: 999px;
-    background: rgba(17, 24, 39, 0.55);
-    color: #fff;
+    border-radius: 50%;
+    background: rgb(0 0 0 / 48%);
+    color: white;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 1.75rem;
     line-height: 1;
+    transform: translateY(-50%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, background 0.15s ease;
+  }
+  .places-gallery:hover .places-gallery-nav {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .places-gallery-nav:hover {
+    background: rgb(0 0 0 / 72%);
+  }
+  .places-gallery-nav svg {
+    width: 1.25rem;
+    height: 1.25rem;
   }
   .places-gallery-prev {
-    left: 8px;
+    left: 0.75rem;
   }
   .places-gallery-next {
-    right: 8px;
+    right: 0.75rem;
   }
   .places-gallery-dots {
+    position: absolute;
+    bottom: 6px;
+    left: 0;
+    right: 0;
     display: flex;
     justify-content: center;
     gap: 5px;
-    padding: 6px 0 8px;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.08));
+    padding: 0;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .places-gallery:hover .places-gallery-dots {
+    opacity: 1;
   }
   .places-gallery-dot {
     width: 6px;
     height: 6px;
     border-radius: 999px;
-    background: rgba(107, 114, 128, 0.45);
+    background: rgba(255, 255, 255, 0.5);
     cursor: pointer;
+    transition: background 0.15s ease, width 0.15s ease;
   }
   .places-gallery-dot.is-active {
-    background: #14b8a6;
+    background: #fff;
   }
-  :root.dark .places-popup {
-    background: #111827;
-    color: #e5e7eb;
-  }
-  :root.dark .places-popup-close,
-  :root.dark .places-popup-link,
-  :root.dark .places-popup-tag {
-    background: #1f2937;
-    color: #d1d5db;
-  }
-  :root.dark .places-popup-date {
-    color: #9ca3af;
+  :root.dark .places-popup-close {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
   }
 </style>
