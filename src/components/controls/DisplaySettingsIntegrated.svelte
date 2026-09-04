@@ -14,6 +14,7 @@ import {
 	getDefaultFullscreenCarouselEnabled,
 	getDefaultCardBorderEnabled,
 	getDefaultCardFollowThemeEnabled,
+	getDefaultFullscreenLayout,
 	getDefaultGradientEnabled,
 	getDefaultHue,
 	getDefaultOverlayBlur,
@@ -28,6 +29,7 @@ import {
 	getStoredFullscreenCarouselEnabled,
 	getStoredCardBorderEnabled,
 	getStoredCardFollowThemeEnabled,
+	getStoredFullscreenLayout,
 	getStoredGradientEnabled,
 	getStoredOverlayBlur,
 	getStoredOverlayCardOpacity,
@@ -41,6 +43,7 @@ import {
 	setFullscreenCarouselEnabled,
 	setCardBorderEnabled,
 	setCardFollowThemeEnabled,
+	setFullscreenLayout,
 	setGradientEnabled,
 	setHue,
 	setOverlayBlur,
@@ -58,7 +61,7 @@ import {
 	displaySettingsConfig,
 	siteConfig,
 } from "@/config";
-import type { WALLPAPER_MODE } from "@/types/config";
+import type { FullscreenWallpaperLayout, WALLPAPER_MODE } from "@/types/config";
 
 type OverlaySliderItem = {
 	key: "opacity" | "blur" | "cardOpacity";
@@ -79,6 +82,10 @@ let hue = $state(getHue());
 const defaultHue = getDefaultHue();
 let wallpaperMode: WALLPAPER_MODE = $state(backgroundWallpaper.mode);
 const defaultWallpaperMode = backgroundWallpaper.mode;
+let fullscreenLayout: FullscreenWallpaperLayout = $state(
+	getDefaultFullscreenLayout(),
+);
+const defaultFullscreenLayout = getDefaultFullscreenLayout();
 let currentLayout: "list" | "grid" = $state("list");
 const defaultLayout = siteConfig.postListLayout.defaultMode;
 const mobileDefaultLayout =
@@ -120,6 +127,10 @@ let cardFollowThemeEnabled = $state(false);
 const defaultCardFollowThemeEnabled = getDefaultCardFollowThemeEnabled();
 
 const isWallpaperSwitchable = displaySettingsConfig.wallpaperModeSwitchable;
+const isFullscreenLayoutSwitchable = $derived(
+	displaySettingsConfig.fullscreenLayoutSwitchable &&
+		wallpaperMode === WALLPAPER_FULLSCREEN,
+);
 const allowLayoutSwitch = displaySettingsConfig.layoutSwitchable;
 let effectiveDefaultLayout = $derived(
 	isMobileWidth ? mobileDefaultLayout : defaultLayout,
@@ -200,14 +211,17 @@ let cardSettingsIsDefault = $derived(
 		(!isCardFollowThemeSwitchable ||
 			cardFollowThemeEnabled === defaultCardFollowThemeEnabled),
 );
-const hasAnyContent =
+
+const hasAnyContent = $derived(
 	showThemeColor ||
 	isWallpaperSwitchable ||
 	allowLayoutSwitch ||
 	isPostCoverImageSwitchable ||
 	hasBannerSettings ||
 	hasOverlaySettings ||
-	isSakuraSwitchable;
+	isSakuraSwitchable||
+	isFullscreenLayoutSwitchable,
+);
 
 // --- Tab visibility ---
 const hasAppearanceTab = $derived(
@@ -218,6 +232,7 @@ const hasAppearanceTab = $derived(
 );
 const hasWallpaperTab = $derived(
 	isWallpaperSwitchable ||
+		isFullscreenLayoutSwitchable ||
 		((wallpaperMode === WALLPAPER_OVERLAY ||
 			wallpaperMode === WALLPAPER_FULLSCREEN) &&
 			hasOverlaySettings) ||
@@ -333,6 +348,17 @@ function resetHue() {
 function resetWallpaperMode() {
 	wallpaperMode = defaultWallpaperMode;
 	setWallpaperMode(defaultWallpaperMode);
+}
+
+function resetFullscreenLayout() {
+	fullscreenLayout = defaultFullscreenLayout;
+	setFullscreenLayout(defaultFullscreenLayout);
+}
+
+function switchFullscreenLayout(layout: FullscreenWallpaperLayout) {
+	if (fullscreenLayout === layout) return;
+	fullscreenLayout = layout;
+	setFullscreenLayout(layout);
 }
 
 function resetLayout() {
@@ -544,6 +570,9 @@ onMount(() => {
 	// 从localStorage读取保存的壁纸模式
 	wallpaperMode = getStoredWallpaperMode();
 
+	// 从localStorage读取保存的全屏壁纸布局
+	fullscreenLayout = getStoredFullscreenLayout();
+
 	// 从localStorage读取水波纹动画状态
 	wavesEnabled = getStoredWavesEnabled();
 
@@ -678,7 +707,7 @@ $effect(() => {
 </script>
 
 {#if hasAnyContent}
-<div id="display-setting" class="float-panel float-panel-closed absolute transition-all w-80 right-4 px-3 pt-0 pb-3 max-h-[80vh] overflow-y-auto" data-floating-panel data-floating-panel-trigger="display-settings-switch" inert aria-hidden="true">
+<div id="display-setting" class="float-panel float-panel-closed absolute transition-all w-80 right-4 px-3 pt-0 pb-3 max-h-[80vh] overflow-y-auto custom-scrollbar" data-floating-panel data-floating-panel-trigger="display-settings-switch" inert aria-hidden="true">
 	<!-- Tab Bar -->
 	{#if showTabBar}
 	<div class="flex gap-1 border-b border-black/5 dark:border-white/10 pt-3 pb-1 mb-3">
@@ -987,8 +1016,44 @@ $effect(() => {
 		</div>
 		{/if}
 
+		<!-- Fullscreen Layout Section -->
+		{#if isFullscreenLayoutSwitchable}
+		<div>
+			<div class="section-title">
+				{i18n(I18nKey.fullscreenLayout)}
+				<button aria-label="Reset to Default" class="btn-regular rounded-md active:scale-90"
+						class:opacity-0={fullscreenLayout === defaultFullscreenLayout} class:pointer-events-none={fullscreenLayout === defaultFullscreenLayout}
+						disabled={fullscreenLayout === defaultFullscreenLayout} aria-hidden={fullscreenLayout === defaultFullscreenLayout ? "true" : undefined} onclick={resetFullscreenLayout}>
+					<div class="text-(--btn-content)">
+						<Icon icon="fa7-solid:arrow-rotate-left" class="text-[0.75rem]"></Icon>
+					</div>
+				</button>
+			</div>
+			<div class="grid grid-cols-2 gap-2">
+				<button
+					class="btn-regular rounded-md py-2 px-3 flex items-center justify-center gap-2 active:scale-95 transition-all relative overflow-hidden"
+					class:opacity-60={fullscreenLayout !== "classic"}
+					class:bg-(--btn-regular-bg-hover)={fullscreenLayout === "classic"}
+					onclick={() => switchFullscreenLayout("classic")}
+				>
+					<Icon icon="material-symbols:view-day-outline" class="text-[1.25rem] shrink-0"></Icon>
+					<span class="text-xs font-medium">{i18n(I18nKey.fullscreenClassicLayout)}</span>
+				</button>
+				<button
+					class="btn-regular rounded-md py-2 px-3 flex items-center justify-center gap-2 active:scale-95 transition-all relative overflow-hidden"
+					class:opacity-60={fullscreenLayout !== "hero"}
+					class:bg-(--btn-regular-bg-hover)={fullscreenLayout === "hero"}
+					onclick={() => switchFullscreenLayout("hero")}
+				>
+					<Icon icon="material-symbols:desktop-landscape-outline-rounded" class="text-[1.25rem] shrink-0"></Icon>
+					<span class="text-xs font-medium">{i18n(I18nKey.fullscreenHeroLayout)}</span>
+				</button>
+			</div>
+		</div>
+		{/if}
+
 		<!-- Overlay Settings Section（全屏壁纸模式也复用 overlay 的透明/模糊/卡片透明度设置） -->
-		{#if (wallpaperMode === WALLPAPER_OVERLAY || wallpaperMode === WALLPAPER_FULLSCREEN) && hasOverlaySettings && hasVisibleOverlaySlider}
+		{#if (wallpaperMode === WALLPAPER_OVERLAY || (wallpaperMode === WALLPAPER_FULLSCREEN && fullscreenLayout === "hero")) && hasOverlaySettings && hasVisibleOverlaySlider}
 		<div class="">
 			<div class="section-title">
 				{i18n(I18nKey.overlaySettings)}
@@ -1075,8 +1140,8 @@ $effect(() => {
 					</div>
 				</button>
 				{/if}
-				<!-- Waves Animation Switch（仅横幅模式，全屏壁纸无水波纹） -->
-				{#if isWavesSwitchable && wallpaperMode === WALLPAPER_BANNER}
+				<!-- Waves Animation Switch（横幅模式和 classic 全屏模式） -->
+				{#if isWavesSwitchable && (wallpaperMode === WALLPAPER_BANNER || (wallpaperMode === WALLPAPER_FULLSCREEN && fullscreenLayout === "classic"))}
 				<button
 					class="w-full btn-regular rounded-md py-2 px-3 flex items-center gap-3 text-left active:scale-95 transition-all relative overflow-hidden"
 					class:bg-(--btn-regular-bg-hover)={wavesEnabled}
@@ -1093,8 +1158,8 @@ $effect(() => {
 					</div>
 				</button>
 				{/if}
-				<!-- Gradient Transition Switch（仅横幅模式，全屏壁纸无渐变过渡） -->
-				{#if isGradientSwitchable && wallpaperMode === WALLPAPER_BANNER}
+				<!-- Gradient Transition Switch（横幅模式和 classic 全屏模式） -->
+				{#if isGradientSwitchable && (wallpaperMode === WALLPAPER_BANNER || (wallpaperMode === WALLPAPER_FULLSCREEN && fullscreenLayout === "classic"))}
 				<button
 					class="w-full btn-regular rounded-md py-2 px-3 flex items-center gap-3 text-left active:scale-95 transition-all relative overflow-hidden"
 					class:bg-(--btn-regular-bg-hover)={gradientEnabled}
