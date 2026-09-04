@@ -387,6 +387,11 @@ export const zh_CN: Translation = {
 	[Key.cardBorder]: "卡片边框和阴影",
 	[Key.cardFollowTheme]: "卡片跟随主题色",
 
+	// 导航栏无障碍标签
+	[Key.displaySettings]: "显示设置",
+	[Key.navMenu]: "导航菜单",
+	[Key.themeSwitch]: "主题切换",
+
 	// 文章布局
 	[Key.postListLayout]: "文章布局",
 	[Key.postListLayoutList]: "列表",

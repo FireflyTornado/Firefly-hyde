@@ -785,6 +785,16 @@ body:not(.is-home) #wallpaper-wrapper.wallpaper-fullscreen .scroll-down-indicato
     display: none;
 }
 
+/* 按钮元素重置（原 div 改为 button 后需清除默认按钮样式） */
+.scroll-down-indicator {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+}
+
 #wallpaper-wrapper.wallpaper-fullscreen .scroll-down-indicator {
     display: flex;
     position: fixed;

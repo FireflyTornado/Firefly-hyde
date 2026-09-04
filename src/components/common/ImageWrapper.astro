@@ -148,5 +148,5 @@ const lqipProps = isLocal
             {...responsiveProps}
         />
     )}
-    {!isLocal && <img src={isPublic ? url(src) : src} alt={alt || ""} class={imageClass} style={imageStyle} loading={loading} fetchpriority={fetchpriority} data-cover-img={dataCoverImg ? true : undefined} referrerpolicy={referrerPolicy} />}
+    {!isLocal && <img src={isPublic ? url(src) : src} alt={alt || ""} class={imageClass} style={imageStyle} loading={loading} fetchpriority={fetchpriority} decoding="async" width={width} height={height} data-cover-img={dataCoverImg ? true : undefined} referrerpolicy={referrerPolicy} />}
 </div>

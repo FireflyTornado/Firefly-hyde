@@ -2,19 +2,28 @@
 import { Icon } from "astro-icon/components";
 ---
 
-<div
+<button
   id="scroll-down-indicator"
   class="scroll-down-indicator"
-  onclick="document.getElementById('main-grid')?.scrollIntoView({ behavior: 'smooth' })"
+  type="button"
+  aria-label="Scroll to main content"
 >
   <Icon name="material-symbols:keyboard-arrow-down-rounded" class="scroll-down-icon" />
-</div>
+</button>
 
 <script is:inline>
   (function () {
     // 防止重复初始化（Swup 页面切换时可能重复执行）
     if (window.__scrollDownIndicatorInit) return;
     window.__scrollDownIndicatorInit = true;
+
+    // 点击滚动到主内容区
+    var btn = document.getElementById("scroll-down-indicator");
+    if (btn) {
+      btn.addEventListener("click", function () {
+        document.getElementById('main-grid')?.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
 
     // 移动端基准：目标让指示器底部距可见视口底约 6.5rem（≈104px）。
     // 与桌面/其他移动端浏览器下 bottom:10rem 的实际观感接近（它们的壁纸底同样超出视口，被顶部地址栏占掉一部分），
@@ -41,7 +50,7 @@ import { Icon } from "astro-icon/components";
       return Math.max(0, el.getBoundingClientRect().bottom - visibleBottom);
     }
 
-    // Edge Android 的底部导航栏是常驻浏览器 chrome，且不反映到 vh/dvh/lvh：
+    // Edge Android 的底部导航栏是常驻浏览器 chrome，且不反映到 vh/dvh/lhv：
     // 全屏壁纸 wrapper（100lvh，或 classic 的 100vh）会延伸到工具栏后面，指示器 bottom 相对壁纸底（在工具栏后面）而显得太靠下。
     // 其他浏览器无此问题，保持 CSS 的 bottom 不动，仅 Edge Android 用 JS 把被遮挡的高度补回来。
     // 必须用 setProperty(..., 'important')：classic 规则的 bottom:5rem 带 !important，普通内联 bottom 覆盖不了它。

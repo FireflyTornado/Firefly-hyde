@@ -389,6 +389,11 @@ export const zh_TW: Translation = {
 	[Key.cardBorder]: "卡片邊框和陰影",
 	[Key.cardFollowTheme]: "卡片跟隨主題色",
 
+	// 導航欄無障礙標籤
+	[Key.displaySettings]: "顯示設定",
+	[Key.navMenu]: "導航選單",
+	[Key.themeSwitch]: "主題切換",
+
 	// 文章佈局
 	[Key.postListLayout]: "文章佈局",
 	[Key.postListLayoutList]: "清單",

@@ -2,7 +2,8 @@
 title: AI 摘要实现
 published: 2026-07-27
 pinned: false
-image: api
+image: "https://photo.seasir.top/images/local/_thumb-1415085bf66a-800.webp"
+
 slug: /ai-summary-tutorial
 tags: ["Firefly"]
 category: Firefly

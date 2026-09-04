@@ -394,6 +394,11 @@ export const ko: Translation = {
 	[Key.cardBorder]: "카드 테두리와 그림자",
 	[Key.cardFollowTheme]: "카드 테마 색상 따르기",
 
+	// 네비게이션 접근성 라벨
+	[Key.displaySettings]: "표시 설정",
+	[Key.navMenu]: "탐색 메뉴",
+	[Key.themeSwitch]: "테마 전환",
+
 	// Post List Layout
 	[Key.postListLayout]: "게시글 목록 레이아웃",
 	[Key.postListLayoutList]: "목록형",

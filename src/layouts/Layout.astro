@@ -51,6 +51,8 @@ interface Props {
 	setOGTypeArticle?: boolean;
 	postSlug?: string;
 	postCoverImage?: string;
+	postPublished?: Date;
+	postUpdated?: Date;
 	hasWallpaper?: boolean;
 }
 
@@ -61,6 +63,8 @@ let {
 	setOGTypeArticle,
 	postSlug,
 	postCoverImage,
+	postPublished,
+	postUpdated,
 	hasWallpaper = false,
 } = Astro.props;
 
@@ -109,6 +113,10 @@ if (siteConfig.post.generateOgImages && postSlug) {
 } else if (postCoverImage) {
 	ogImageUrl = postCoverImage; // 已由文章页算成绝对 URL
 }
+// 非文章页面使用站点默认 OG 图片
+if (!ogImageUrl) {
+	ogImageUrl = new URL("/favicon/favicon-light-192.png", Astro.site).toString();
+}
 
 const favicons: Favicon[] =
 	siteConfig.favicon.length > 0 ? siteConfig.favicon : defaultFavicons;
@@ -137,6 +145,13 @@ const siteLogo = await getSiteLogo();
     <style is:inline>
 			@layer properties, theme, base, components, utilities;
 		</style>
+    {/* 第三方资源预连接 */}
+    {analyticsConfig?.googleAnalyticsId && (
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+    )}
+    {analyticsConfig?.microsoftClarityId && (
+        <link rel="preconnect" href="https://www.clarity.ms" />
+    )}
     {analyticsConfig?.googleAnalyticsId && (
             <GoogleAnalytics analyticsId={analyticsConfig.googleAnalyticsId} />
     )}
@@ -177,15 +192,17 @@ const siteLogo = await getSiteLogo();
     <meta name="author" content={profileConfig.name} />
 
     <link rel="canonical" href={Astro.url} />
+    <meta name="robots" content="index, follow" />
     <meta property="og:site_name" content={siteConfig.title} />
+    <meta property="og:locale" content={siteLang.replace("-", "_")} />
     <meta property="og:url" content={Astro.url} />
     <meta property="og:title" content={pageTitle} />
     <meta
       property="og:description"
       content={description || siteConfig.description || pageTitle}
     />
-    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
-    {ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
+    <meta property="og:image" content={ogImageUrl} />
+    <meta name="twitter:image" content={ogImageUrl} />
     {
       setOGTypeArticle ? (
         <meta property="og:type" content="article" />
@@ -193,8 +210,14 @@ const siteLogo = await getSiteLogo();
         <meta property="og:type" content="website" />
       )
     }
+    {setOGTypeArticle && postPublished && (
+      <meta property="article:published_time" content={postPublished.toISOString()} />
+    )}
+    {setOGTypeArticle && postUpdated && (
+      <meta property="article:modified_time" content={postUpdated.toISOString()} />
+    )}
 
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content={ogImageUrl ? "summary_large_image" : "summary"} />
     <meta property="twitter:url" content={Astro.url} />
     <meta name="twitter:title" content={pageTitle} />
     <meta
@@ -222,7 +245,9 @@ const siteLogo = await getSiteLogo();
       )
     }
 
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: dark)" />
     <meta name="generator" content={Astro.generator} />
     {
       favicons.map((favicon) => (

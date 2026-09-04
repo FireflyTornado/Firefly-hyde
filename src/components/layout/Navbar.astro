@@ -123,7 +123,7 @@ const logoVariants = await Promise.all(
 		})),
 );
 ---
-<div id="navbar" class="z-50" style={`--navbar-glass-blur: ${navbarBlur}px;`} data-transparent-mode={navbarTransparentMode} data-is-home={isHomePageCheck} data-full-width={navbarWidthFull}>
+<nav id="navbar" class="z-50" style={`--navbar-glass-blur: ${navbarBlur}px;`} data-transparent-mode={navbarTransparentMode} data-is-home={isHomePageCheck} data-full-width={navbarWidthFull}>
     <script is:inline define:vars={{
       bannerTMode: backgroundWallpaper.banner?.navbar?.transparentMode || "semi",
       bannerBlur: backgroundWallpaper.banner?.navbar?.blur ?? 20,
@@ -202,7 +202,7 @@ const logoVariants = await Promise.all(
             <div class="flex col-start-3 justify-self-end">
                 <!--<SearchPanel client:load>-->
                 <Search
-                    client:load
+                    client:idle
                 />
                 {musicPlayerConfig.showInNavbar && (
                     <button aria-label={i18n(I18nKey.music)} aria-controls="music-nav-panel" aria-expanded="false" class="btn-plain scale-animation rounded-lg h-9 w-9 md:h-11 md:w-11 active:scale-90" id="music-player-switch">
@@ -222,13 +222,13 @@ const logoVariants = await Promise.all(
                     </button>
                 )}
                 {hasDisplaySettings && (
-                        <button aria-label="Display Settings" aria-controls="display-setting" aria-expanded="false" class="btn-plain scale-animation rounded-lg h-9 w-9 md:h-11 md:w-11 active:scale-90" id="display-settings-switch">
+                        <button aria-label={i18n(I18nKey.displaySettings)} aria-controls="display-setting" aria-expanded="false" class="btn-plain scale-animation rounded-lg h-9 w-9 md:h-11 md:w-11 active:scale-90" id="display-settings-switch">
                             <Icon name="material-symbols:palette-outline" class="text-[1.25rem]"></Icon>
                         </button>
                 )}
                 {/* @ts-ignore */}
-                <LightDarkSwitch client:load></LightDarkSwitch>
-                <button aria-label="Menu" aria-controls="nav-menu-panel" aria-expanded="false" name="Nav Menu" class="btn-plain scale-animation rounded-lg w-9 h-9 md:w-11 md:h-11 active:scale-90 lg:hidden!" id="nav-menu-switch">
+                <LightDarkSwitch client:idle></LightDarkSwitch>
+                <button aria-label={i18n(I18nKey.navMenu)} aria-controls="nav-menu-panel" aria-expanded="false" name="Nav Menu" class="btn-plain scale-animation rounded-lg w-9 h-9 md:w-11 md:h-11 active:scale-90 lg:hidden!" id="nav-menu-switch">
                     <Icon name="material-symbols:menu-rounded" class="text-[1.25rem]"></Icon>
                 </button>
             </div>
@@ -238,9 +238,9 @@ const logoVariants = await Promise.all(
                 <MusicPlayer />
             </div>
         )}
-        {isDisplaySettingsEnabled && <DisplaySettings client:load></DisplaySettings>}
+        {isDisplaySettingsEnabled && <DisplaySettings client:idle></DisplaySettings>}
     </div>
-</div>
+</nav>
 
 <script>
 function loadButtonScript() {
@@ -250,6 +250,8 @@ function loadButtonScript() {
             let settingPanel = document.getElementById("display-setting");
             if (settingPanel) {
                 settingPanel.classList.toggle("float-panel-closed");
+                settingBtn.setAttribute("aria-expanded",
+                    settingPanel.classList.contains("float-panel-closed") ? "false" : "true");
             }
         };
     }
@@ -260,6 +262,8 @@ function loadButtonScript() {
             let menuPanel = document.getElementById("nav-menu-panel");
             if (menuPanel) {
                 menuPanel.classList.toggle("float-panel-closed");
+                menuBtn.setAttribute("aria-expanded",
+                    menuPanel.classList.contains("float-panel-closed") ? "false" : "true");
             }
         };
     }
@@ -270,6 +274,8 @@ function loadButtonScript() {
             let musicPanel = document.getElementById("music-nav-panel");
             if (musicPanel) {
                 musicPanel.classList.toggle("float-panel-closed");
+                musicBtn.setAttribute("aria-expanded",
+                    musicPanel.classList.contains("float-panel-closed") ? "false" : "true");
             }
         };
     }
@@ -324,6 +330,8 @@ function loadButtonScript() {
             let themePanel = document.getElementById("theme-mode-panel");
             if (themePanel) {
                 themePanel.classList.toggle("float-panel-closed");
+                themeSwitchBtn.setAttribute("aria-expanded",
+                    themePanel.classList.contains("float-panel-closed") ? "false" : "true");
             }
         };
     }
@@ -340,6 +348,7 @@ function loadButtonScript() {
             if (panel && button && !panel.classList.contains("float-panel-closed")) {
                 if (event.target instanceof Node && !panel.contains(event.target) && !button.contains(event.target)) {
                     panel.classList.add("float-panel-closed");
+                    button.setAttribute("aria-expanded", "false");
                 }
             }
         });

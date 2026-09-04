@@ -396,6 +396,11 @@ export const en: Translation = {
 	[Key.cardBorder]: "Card Border & Shadow",
 	[Key.cardFollowTheme]: "Card Follow Theme Color",
 
+	// Navigation accessibility labels
+	[Key.displaySettings]: "Display Settings",
+	[Key.navMenu]: "Navigation Menu",
+	[Key.themeSwitch]: "Theme Switch",
+
 	// Post List Layout
 	[Key.postListLayout]: "Post List Layout",
 	[Key.postListLayoutList]: "List",

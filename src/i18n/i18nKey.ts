@@ -383,6 +383,11 @@ enum I18nKey {
 	cardBorder = "cardBorder",
 	cardFollowTheme = "cardFollowTheme",
 
+	// 导航栏无障碍标签
+	displaySettings = "displaySettings",
+	navMenu = "navMenu",
+	themeSwitch = "themeSwitch",
+
 	// 文章布局
 	postListLayout = "postListLayout",
 	postListLayoutList = "postListLayoutList",

@@ -397,6 +397,11 @@ export const ru: Translation = {
 	[Key.cardBorder]: "Рамка и тень карточек",
 	[Key.cardFollowTheme]: "Карточки跟随主题色",
 
+	// Метки доступности навигации
+	[Key.displaySettings]: "Настройки отображения",
+	[Key.navMenu]: "Меню навигации",
+	[Key.themeSwitch]: "Переключение темы",
+
 	// Макет списка сообщений
 	[Key.postListLayout]: "Макет списка сообщений",
 	[Key.postListLayoutList]: "Список",

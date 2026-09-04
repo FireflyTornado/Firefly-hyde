@@ -33,10 +33,10 @@ const {
   id={id}
   title={title ?? ariaLabel}
   class:list={["floating-btn", className, "card-base flex items-center rounded-2xl overflow-hidden transition"]}
-  onclick={onclick}
 >
   <button
     aria-label={ariaLabel}
+    onclick={onclick}
     class:list={["h-full w-full rounded-2xl", toggleIcon && "has-toggle-icon"]}
   >
     <Icon name={icon} class:list={["mx-auto", toggleIcon && "icon-default"]} />

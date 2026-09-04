@@ -194,7 +194,7 @@ const hasInitiallyVisibleTopComponents = topComponents.some(
 
 {
 	(topComponents.length > 0 || stickyComponents.length > 0 || bottomComponents.length > 0) && (
-		<div id={`${side}-sidebar`} class:list={[className, "flex flex-col w-full pt-0"]}>
+		<aside id={`${side}-sidebar`} aria-label="Sidebar" class:list={[className, "flex flex-col w-full pt-0"]}>
 			{/* Mobile bottom components - 直接渲染所有组件，不分组 */}
 			{isMobileBottom ? (
 				<div class="flex flex-col w-full gap-4">
@@ -248,6 +248,6 @@ const hasInitiallyVisibleTopComponents = topComponents.some(
 					)}
 				</>
 			)}
-		</div>
+		</aside>
 	)
 }

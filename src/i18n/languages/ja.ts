@@ -394,6 +394,11 @@ export const ja: Translation = {
 	[Key.cardBorder]: "カードのボーダーと影",
 	[Key.cardFollowTheme]: "カードのテーマカラー追随",
 
+	// ナビゲーションアクセシビリティラベル
+	[Key.displaySettings]: "表示設定",
+	[Key.navMenu]: "ナビゲーションメニュー",
+	[Key.themeSwitch]: "テーマ切替",
+
 	// 投稿リストレイアウト
 	[Key.postListLayout]: "投稿リストレイアウト",
 	[Key.postListLayoutList]: "リスト",
