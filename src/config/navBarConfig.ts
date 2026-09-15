@@ -164,12 +164,6 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 				external: true,
 				icon: "tdesign:logo-cnb-filled",
 			},
-			{
-				name: "个人主页",
-				url: "https://home.seasir.top/",
-				external: true,
-				icon: "material-symbols:page-footer-outline",
-			},
 			// {
 			// 	name: "QQ交流群",
 			// 	url: "https://qq.com",
