@@ -504,6 +504,7 @@ enum I18nKey {
 	galleryAlbums = "galleryAlbums",
 	galleryNoAlbums = "galleryNoAlbums",
 	galleryBackToAlbums = "galleryBackToAlbums",
+	galleryEnterAlbum = "galleryEnterAlbum",
 	searchAlbums = "searchAlbums",
 	albumsFilterAll = "albumsFilterAll",
 

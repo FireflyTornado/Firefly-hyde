@@ -12,6 +12,8 @@ import {
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import "@/styles/pages/common.css";
+import "@/styles/pages/friends.css";
 
 // 检查页面是否启用
 if (!siteConfig.pages.friends) {
@@ -107,13 +109,6 @@ const copyAllOnClick = `navigator.clipboard.writeText('站点名称：${escapedS
             </button>
           </div>
         </div>
-        {
-          description && (
-            <p class="text-base text-neutral-600 dark:text-neutral-400 leading-relaxed mb-4">
-              {description}
-            </p>
-          )
-        }
       </div>
 
       <!-- 搜索框 -->
