@@ -132,10 +132,12 @@ export default defineConfig({
 			],
 			smoothScrolling: false,
 			cache: true,
-			preload: {
-				hover: true,
-				visible: true,
-			},
+		preload: {
+			// 保留 hover 预取（鼠标悬停再预取，不拖累首屏）；
+			// 关闭 visible 预取，避免首页加载时对视口内所有链接整页预取、与首屏资源抢带宽
+			hover: true,
+			visible: false,
+		},
 			accessibility: true,
 			updateHead: true,
 			updateBodyClass: false,

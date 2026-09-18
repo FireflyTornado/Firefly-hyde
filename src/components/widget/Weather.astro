@@ -12,15 +12,11 @@ interface Props {
 
 const { class: className, style, city, adcode, extended = true } = Astro.props;
 
-// 缓存键名
-const CACHE_KEY = "weather_data_cache";
-const CACHE_DURATION = 30 * 60 * 1000; // 30分钟缓存
-
 const COLLAPSED_HEIGHT = "9rem";
 ---
 
 <WidgetLayout name="天气预报" id="weather-widget" isCollapsed={true} collapsedHeight={COLLAPSED_HEIGHT} class={className} style={style}>
-	<div class="weather-container" data-weather-init>
+	<div class="weather-container" data-weather-init data-city={city} data-adcode={adcode} data-extended={extended ? "true" : "false"}>
 		<!-- 加载状态 -->
 		<div class="weather-loading" data-weather-loading>
 			<div class="loading-spinner"></div>
@@ -577,9 +573,12 @@ const COLLAPSED_HEIGHT = "9rem";
 	}
 </style>
 
-<script is:inline define:vars={{ city, adcode, CACHE_KEY, CACHE_DURATION, extended }}>
+<script>
 	(function () {
 		const API_URL = "https://uapis.cn/api/v1/misc/weather?";
+
+		// 缓存键名
+		const CACHE_KEY = "weather_data_cache";
 
 		// 缓存管理
 		const cacheManager = {
@@ -596,7 +595,7 @@ const COLLAPSED_HEIGHT = "9rem";
 		};
 
 		// 获取天气数据 - 支持 IP 自动定位
-		async function fetchWeather() {
+		async function fetchWeather(adcode, city, extended) {
 			const params = new URLSearchParams();
 			if (adcode) {
 				params.set("adcode", adcode);
@@ -611,7 +610,15 @@ const COLLAPSED_HEIGHT = "9rem";
 			params.set("forecast", "true");
 
 			const url = API_URL + params.toString();
-			const response = await fetch(url);
+			// 第三方接口加超时，避免慢响应拖慢页面
+			const controller = new AbortController();
+			const timer = setTimeout(() => controller.abort(), 8000);
+			let response;
+			try {
+				response = await fetch(url, { signal: controller.signal });
+			} finally {
+				clearTimeout(timer);
+			}
 
 			if (!response.ok) {
 				throw new Error(`请求失败: ${response.status}`);
@@ -754,6 +761,15 @@ const COLLAPSED_HEIGHT = "9rem";
 
 		// 初始化组件
 		function initWidget(container) {
+			// 防止同一组件被多次脚本初始化（多实例 / 脚本重复时避免重复请求）
+			if (container.dataset.weatherInited === "true") return;
+			container.dataset.weatherInited = "true";
+
+			// 配置从 DOM 数据属性读取（脚本改为打包去重后不再依赖 define:vars）
+			const adcode = container.dataset.adcode || "";
+			const city = container.dataset.city || "";
+			const extended = container.dataset.extended === "true";
+
 			const retryBtn = container.querySelector("[data-retry-btn]");
 			const content = container.querySelector("[data-weather-content]");
 			const loading = container.querySelector("[data-weather-loading]");
@@ -766,7 +782,7 @@ const COLLAPSED_HEIGHT = "9rem";
 				content.classList.add("weather-hidden");
 
 				try {
-					const data = await fetchWeather();
+					const data = await fetchWeather(adcode, city, extended);
 					updateUI(container, data);
 				} catch (e) {
 					updateUI(container, null, e.message || "获取天气信息失败");
@@ -783,8 +799,9 @@ const COLLAPSED_HEIGHT = "9rem";
 				});
 			}
 
-			// 自动加载天气数据（基于用户浏览器IP定位）
-			loadWeather();
+			// 延迟到浏览器空闲时再请求第三方天气接口，避免与首屏关键资源抢带宽
+			const schedule = window.requestIdleCallback || function (cb) { return setTimeout(cb, 300); };
+			schedule(loadWeather);
 		}
 
 		// 启动
